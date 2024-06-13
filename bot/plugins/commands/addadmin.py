@@ -15,24 +15,20 @@ async def addadmin(client: Client, message: Message):
             try:
                 user = await client.get_users(admin)
                 text += f" - {user.mention(style='md')} ({user.id})\n"
-            except:
+            except Exception:
                 text += f" - {admin}\n"
         await message.reply_text(f"Usage: /addadmin user_id\n\n{text}")
         return
 
     user_id = message.text.split(None, 1)[1]
 
-    if user_id.isdigit():
-        user_id = int(user_id)
-    else:
-        user_id = user_id.replace("@", "")
-
+    user_id = int(user_id) if user_id.isdigit() else user_id.replace("@", "")
     try:
         user = await client.get_users(user_id)
-    except:
+    except Exception:
         await message.reply_text("Invalid user ID")
         return
-        
+
     added = await add_admin(user_id)
     if added:
         await message.reply_text("Admin added successfully")
@@ -50,7 +46,7 @@ async def admins(client: Client, message: Message):
         try:
             user = await client.get_users(admin)
             text += f"- {user.mention(style='md')} ({user.id})\n"
-        except:
+        except Exception:
             text += f"- {admin}\n"
     await message.reply_text(text)
 
@@ -66,16 +62,12 @@ async def removeadmin(client: Client, message: Message):
             try:
                 user = await client.get_users(admin)
                 text += f" - {user.mention(style='md')} ({user.id})\n"
-            except:
+            except Exception:
                 text += f" - {admin}\n"
         await message.reply_text(f"Usage: /removeadmin user_id\n\n{text}")
         return
     user_id = message.text.split(None, 1)[1]
-    if user_id.isdigit():
-        user_id = int(user_id)
-    else:
-        user_id = user_id.replace("@", "")
-
+    user_id = int(user_id) if user_id.isdigit() else user_id.replace("@", "")
     removed = await remove_admin(user_id)
     if removed:
         await message.reply_text("Admin removed successfully")
