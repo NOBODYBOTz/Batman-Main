@@ -1,4 +1,4 @@
-from pyrogram import Client, ContinuePropagation
+from pyrogram import Client, ContinuePropagation, filters
 from pyrogram.raw.types import UpdateNewChannelMessage
 
 from bot.plugins.on_channel_media import on_channel_media
@@ -10,3 +10,8 @@ from bot.plugins.on_channel_media import on_channel_media
 #         await on_channel_media(bot, update)
 #     else:
 #         raise ContinuePropagation
+
+
+@Client.on_message(filters.channel)
+async def on_raw_update(bot, message):
+    await on_channel_media(bot, message)
