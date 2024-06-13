@@ -1,7 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 
 
-
 class ConfigDB:
     def __init__(self, uri, database_name):
         self._client = AsyncIOMotorClient(uri)
