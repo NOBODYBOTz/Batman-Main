@@ -13,16 +13,11 @@ async def forcesub(c: Client, m: Message):
     if m.text and not m.text.startswith("/") and m.chat.id not in admins:
         return await m.reply(Script.NOT_ALLOWED_TEXT, quote=True)
 
-    if m.text and len(m.text.split()) > 1:
-        command = m.text.split()[1]
-    else:
-        command = ""
-
+    command = m.text.split()[1] if m.text and len(m.text.split()) > 1 else ""
     if m.chat.id in admins:
         return await m.continue_propagation()
-    else:
-        if m.text and m.text.split()[0] != "/start":
-            return await m.reply(Script.ARROGANT_REPLY, quote=True)
+    if m.text and m.text.split()[0] != "/start":
+        return await m.reply(Script.ARROGANT_REPLY, quote=True)
 
     out = await m.reply("Loading...")
     force_sub = (await db.config.get_config("force_sub_config")) or {}
@@ -34,25 +29,17 @@ async def forcesub(c: Client, m: Message):
         return
 
     channel_status = await check_channels(c, m.from_user.id, force_sub)
-    not_joined_channels = [ch for ch in channel_status if not ch["joined"]]
-
-    if not_joined_channels:
+    if not_joined_channels := [ch for ch in channel_status if not ch["joined"]]:
         text = await create_channel_status_file(channel_status)
-        buttons = []
-        for i, channel in enumerate(channel_status, start=1):
-            if not channel["joined"]:
-                buttons.append(
-                    InlineKeyboardButton(text=f"Join Channel {i}", url=channel["link"])
-                )
-
+        buttons = [
+            InlineKeyboardButton(text=f"Join Channel {i}", url=channel["link"])
+            for i, channel in enumerate(channel_status, start=1)
+            if not channel["joined"]
+        ]
         markup = [buttons[i : i + 2] for i in range(0, len(buttons), 2)]
 
         markup.append(
-            [
-                InlineKeyboardButton(
-                    text="Try Again", callback_data=f"refresh_{command}"
-                )
-            ]
+            [InlineKeyboardButton(text="Try Again", callback_data=f"refresh_{command}")]
         )
         text += "\n𝖧𝖾𝗅𝗅𝗈 {mention} 𝗒𝗈𝗎 𝗁𝖺𝗏𝖾 𝗍𝗈 𝗃𝗈𝗂𝗇 𝗆𝗒 𝖼𝗁𝖺𝗇𝗇𝖾𝗅𝗌 𝗍𝗈 𝗀𝖾𝗍 𝗒𝗈𝗎𝗋 𝖿𝗂𝗅𝖾𝗌. 𝖪𝗂𝗇𝖽𝗅𝗒 𝗃𝗈𝗂𝗇 𝗍𝗁𝖾 𝖼𝗁𝖺𝗇𝗇𝖾𝗅𝗌 𝖺𝗇𝖽 𝗍𝗋𝗒 𝖺𝗀𝖺𝗂𝗇."
         await m.reply(
@@ -66,6 +53,7 @@ async def forcesub(c: Client, m: Message):
     await out.delete()
     await m.continue_propagation()
 
+
 @Client.on_callback_query(filters.regex("^refresh"))
 async def refresh_cb(c: Client, m):
     command = m.data.split("_", 1)[1] if len(m.data.split("_")) > 1 else ""
@@ -74,19 +62,13 @@ async def refresh_cb(c: Client, m):
     force_sub = force_sub.get("value", [])
 
     channel_status = await check_channels(c, m.from_user.id, force_sub)
-    if not_joined_channels := [
-        ch for ch in channel_status if not ch["joined"]
-    ]:
+    if not_joined_channels := [ch for ch in channel_status if not ch["joined"]]:
         markup = [
             [InlineKeyboardButton(text=f"Join {i['name']}", url=i["link"])]
             for i in not_joined_channels
         ]
         markup.append(
-            [
-                InlineKeyboardButton(
-                    text="Try Again", callback_data=f"refresh_{command}"
-                )
-            ]
+            [InlineKeyboardButton(text="Try Again", callback_data=f"refresh_{command}")]
         )
         filename = await create_channel_status_file(channel_status)
         await m.message.edit(
