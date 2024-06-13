@@ -171,7 +171,7 @@ async def custom_send(client: Client, message: Message, file_delete_time: int, m
 
     for msg in messages:
         msg: Message
-        caption = "" if not msg.caption else msg.caption.html
+        caption = msg.caption.html if msg.caption else ""
         try:
             log = await msg.copy(
                 chat_id=message.from_user.id,
@@ -191,8 +191,6 @@ async def custom_send(client: Client, message: Message, file_delete_time: int, m
         except Exception as e:
             print(e)
             continue
-            pass
-        
         if log:
             await schedule_deletion(log.chat.id, log.id, file_delete_time)
 

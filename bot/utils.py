@@ -1,5 +1,6 @@
 import asyncio
 import base64
+import contextlib
 import datetime
 import logging
 import math
@@ -154,10 +155,7 @@ async def add_request_join(chat_id, user_id):
 async def is_user_in_request_join(chat_id, user_id):
     request_joins = await db.config.get_config("request_joins")
     request_joins = request_joins.get("value", {})
-    if str(chat_id) in request_joins:
-        if user_id in request_joins[str(chat_id)]:
-            return True
-    return False
+    return str(chat_id) in request_joins and user_id in request_joins[str(chat_id)]
 
 
 async def process_delete_schedule(bot):
@@ -177,18 +175,15 @@ async def process_delete_schedule_single(bot, schedule):
     message_id = schedule["message_id"]
     time = schedule["time"]
     if time < datetime.datetime.now():
-        try:
+        with contextlib.suppress(errors.MessageDeleteForbidden):
             await bot.delete_messages(chat_id, message_id)
-        except errors.MessageDeleteForbidden:
-            pass
         await db.del_schedule.update_schedule(chat_id, message_id, True)
 
 
 async def encode(string):
     string_bytes = string.encode("ascii")
     base64_bytes = base64.urlsafe_b64encode(string_bytes)
-    base64_string = (base64_bytes.decode("ascii")).strip("=")
-    return base64_string
+    return (base64_bytes.decode("ascii")).strip("=")
 
 
 async def decode(base64_string):
@@ -197,8 +192,7 @@ async def decode(base64_string):
     )  # links generated before this commit will be having = sign, hence striping them to handle padding errors.
     base64_bytes = (base64_string + "=" * (-len(base64_string) % 4)).encode("ascii")
     string_bytes = base64.urlsafe_b64decode(base64_bytes)
-    string = string_bytes.decode("ascii")
-    return string
+    return string_bytes.decode("ascii")
 
 
 async def get_messages(client, message_ids):
@@ -216,7 +210,7 @@ async def get_messages(client, message_ids):
             msgs = await client.get_messages(
                 chat_id=Config.CHANNELS, message_ids=temb_ids
             )
-        except:
+        except Exception:
             continue
         total_messages += len(temb_ids)
         messages.extend(msgs)
@@ -225,8 +219,7 @@ async def get_messages(client, message_ids):
 
 def get_caption(**kwargs):
     caption = Script.DEFAULT_CAPTION
-    text = caption.format(**kwargs)
-    return text
+    return caption.format(**kwargs)
 
 
 def get_func(ins):
@@ -241,10 +234,7 @@ def get_channel_id(message, n=1, s=" "):
         channel_id = None
     elif len(message.data.split(s)) > n:
         channel_id = message.data.split(s)[n]
-        if channel_id == "None":
-            channel_id = None
-        else:
-            channel_id = int(channel_id)
+        channel_id = None if channel_id == "None" else int(channel_id)
     else:
         channel_id = None
     return channel_id
