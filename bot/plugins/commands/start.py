@@ -1,5 +1,5 @@
 from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardMarkup
+from pyrogram.types import Message, InlineKeyboardMarkup, CallbackQuery
 from bot.config import Config, Script, Buttons
 from bot.plugins.forcesub import forcesub
 from bot.plugins.on_start_file import get_file
@@ -9,11 +9,11 @@ from database import db
 
 @Client.on_message(filters.command("start") & filters.private & filters.incoming)
 @Client.on_callback_query(filters.regex(pattern=r"^start$"))
-async def start(bot: Client, message: Message):
+async def start(bot: Client, message: Message | CallbackQuery):
 
-    if not await forcesub(bot, message):
+    if isinstance(message, Message) and not await forcesub(bot, message):
         return
-    
+
     chat_id = message.from_user.id
     admins = await get_admins()
     is_new_user = await add_new_user(message.from_user.id)
