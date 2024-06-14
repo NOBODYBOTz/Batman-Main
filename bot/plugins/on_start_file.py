@@ -133,7 +133,7 @@ async def custom_send(client: Client, message: Message, file_delete_time: int, m
     text = message.text
     try:
         base64_string = text.split(" ", 1)[1]
-    except:
+    except Exception:
         return
 
     string = await decode(base64_string)
@@ -142,7 +142,7 @@ async def custom_send(client: Client, message: Message, file_delete_time: int, m
         try:
             start = int(int(argument[1]) / abs(Config.CHANNELS))
             end = int(int(argument[2]) / abs(Config.CHANNELS))
-        except:
+        except Exception:
             return
         if start <= end:
             ids = range(start, end + 1)
@@ -157,7 +157,7 @@ async def custom_send(client: Client, message: Message, file_delete_time: int, m
     elif len(argument) == 2:
         try:
             ids = [int(int(argument[1]) / abs(Config.CHANNELS))]
-        except:
+        except Exception:
             return
     temp_msg = await message.reply("Please wait...")
 

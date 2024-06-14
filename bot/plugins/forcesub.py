@@ -7,7 +7,7 @@ from bot.utils import get_admins, is_user_in_request_join
 from database import db
 
 
-@Client.on_message(filters.private & filters.incoming, group=-1)
+# @Client.on_message(filters.private & filters.incoming, group=-1)
 async def forcesub(c: Client, m: Message):
     admins = await get_admins()
     if m.text and not m.text.startswith("/") and m.chat.id not in admins:
@@ -15,7 +15,7 @@ async def forcesub(c: Client, m: Message):
 
     command = m.text.split()[1] if m.text and len(m.text.split()) > 1 else ""
     if m.chat.id in admins:
-        return await m.continue_propagation()
+        return True
     if m.text and m.text.split()[0] != "/start":
         return await m.reply(Script.ARROGANT_REPLY, quote=True)
 
@@ -25,8 +25,7 @@ async def forcesub(c: Client, m: Message):
 
     if not force_sub:
         await out.delete()
-        await m.continue_propagation()
-        return
+        return True
 
     channel_status = await check_channels(c, m.from_user.id, force_sub)
     if not_joined_channels := [ch for ch in channel_status if not ch["joined"]]:
@@ -51,7 +50,7 @@ async def forcesub(c: Client, m: Message):
         raise StopPropagation
 
     await out.delete()
-    await m.continue_propagation()
+    return True
 
 
 @Client.on_callback_query(filters.regex("^refresh"))

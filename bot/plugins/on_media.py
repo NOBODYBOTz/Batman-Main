@@ -8,7 +8,7 @@ import string
 
 
 # Define the main event handler
-@Client.on_message(filters.media & (filters.private | filters.group), group=1)
+@Client.on_message(filters.media & (filters.private | filters.group) & filters.incoming , group=1)
 @check
 async def on_media(bot: Client, message: Message):
     await handle_media_message(message)
