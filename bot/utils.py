@@ -161,14 +161,8 @@ async def is_user_in_request_join(chat_id, user_id):
 async def process_delete_schedule(bot):
     schedules = await db.del_schedule.filter_schedules({"status": False})
     for schedule in schedules:
-        sc = bot.sc
-        sc.add_job(
-            process_delete_schedule_single,
-            args=(bot, schedule),
-            trigger="date",
-            run_date=datetime.datetime.now() + datetime.timedelta(seconds=5),
-        )
-
+        await process_delete_schedule_single(bot, schedule)
+        await asyncio.sleep(1)
 
 async def process_delete_schedule_single(bot, schedule):
     chat_id = schedule["chat_id"]
