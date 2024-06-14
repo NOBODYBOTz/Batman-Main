@@ -48,6 +48,8 @@ async def process_update_new_channel_message(bot, message):
 
 
 def process_media(message):
+    if not message.media:
+        return None
     media = getattr(message, message.media.value)
     return media or None
 
