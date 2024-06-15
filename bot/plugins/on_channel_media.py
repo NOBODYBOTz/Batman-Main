@@ -7,11 +7,13 @@ from bot.utils import handle_floodwait
 from database import db
 
 
-async def on_channel_media(bot: Client, message: Message ):
+async def on_channel_media(bot: Client, message: Message):
     if not isinstance(message, Message):
         message = await process_update_new_channel_message(bot, message)
         if not message:
             return
+    elif message.chat.id != Config.CHANNELS:
+        return
 
     if message.sticker:
         return
