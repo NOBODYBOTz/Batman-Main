@@ -10,5 +10,5 @@ if __name__ == "__main__":
     sc.start()
     app = Bot()
     app.sc = sc
-    #sc.add_job(process_delete_schedule, "interval", seconds=10, args=(app,))
+    sc.add_job(process_delete_schedule, "interval", seconds=30, args=(app,))
     app.run()
