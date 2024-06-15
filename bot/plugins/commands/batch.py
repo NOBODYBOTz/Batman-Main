@@ -1,6 +1,7 @@
 import random
 import string
 import pyrogram
+from bot.config import Config
 from bot.utils import check
 from database import db
 
@@ -54,6 +55,12 @@ async def batch(bot: pyrogram.Client, message: pyrogram.types.Message):
     except Exception:
         return await ask.reply_text(
             "𝖨𝗇𝗏𝖺𝗅𝗂𝖽 𝖢𝗁𝖺𝗇𝗇𝖾𝗅 𝖨𝖣 𝗈𝗋 𝖴𝗌𝖾𝗋𝗇𝖺𝗆𝖾",
+            reply_markup=pyrogram.types.ReplyKeyboardRemove(),
+        )
+
+    if first_message.chat.id != Config.CHANNELS or last_message.chat.id != Config.CHANNELS:
+        return await ask.reply_text(
+            "𝖳𝗁𝖾 𝖥𝗂𝗋𝗌𝗍 𝖠𝗇𝖽 𝖫𝖺𝗌𝗍 𝖬𝖾𝗌𝗌𝖺𝗀𝖾𝗌 𝖲𝗁𝗈𝗎𝗅𝖽 𝖡𝖾 𝖥𝗋𝗈𝗆 𝖳𝗁𝖾 𝖽𝖡 𝖢𝗁𝖺𝗇𝗇𝖾𝗅",
             reply_markup=pyrogram.types.ReplyKeyboardRemove(),
         )
 
