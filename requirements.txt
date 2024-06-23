@@ -1,7 +1,7 @@
 aiohttp==3.9.3
 APScheduler==3.10.4
 motor==3.3.2
-pandas==2.2.2
+pandas==2.0.2
 psutil==5.9.8
 git+https://github.com/KurimuzonAkuma/pyrogram
 pyromod==3.1.6
