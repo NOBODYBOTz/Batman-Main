@@ -40,12 +40,12 @@ User ID: `{user['_id']}`
 
 Total Files Received: `{total_files}`
 
-Banned: `{user['banned']}`
+Banned: `{user.get('banned', False)}`
 """
 
     markup = []
 
-    if user["banned"]:
+    if user.get('banned', False):
         markup.append(
             [
                 InlineKeyboardButton(
