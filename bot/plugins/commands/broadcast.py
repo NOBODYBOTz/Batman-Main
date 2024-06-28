@@ -1,3 +1,4 @@
+from contextlib import suppress
 from pyrogram import Client, filters, errors
 import datetime
 import time
@@ -56,9 +57,10 @@ async def b_handler(bot, message):
         success += success1
 
         if not done % 50:
-            await sts.edit(
-                f"Broadcast in progress:\n\nTotal Users {total_users}\nCompleted: {done} / {total_users}\nSuccess: {success}\nBlocked: {blocked}\nDeleted: {deleted}"
-            )
+            with suppress(Exception):
+                await sts.edit(
+                    f"Broadcast in progress:\n\nTotal Users {total_users}\nCompleted: {done} / {total_users}\nSuccess: {success}\nBlocked: {blocked}\nDeleted: {deleted}"
+                )
 
     time_taken = datetime.timedelta(seconds=int(time.time() - start_time))
     await sts.edit(
