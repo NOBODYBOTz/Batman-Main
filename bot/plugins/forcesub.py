@@ -84,7 +84,6 @@ async def refresh_cb(c: Client, m):
         m.text = f"/start {command}"
         m.command = ["start", command]
         await get_file(c, m)
-        await get_file(c, m)
 
 
 async def create_channel_status_file(channel_status):
