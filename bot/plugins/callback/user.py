@@ -1,10 +1,12 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from bot.config import Buttons
+from bot.utils import check
 from database import db
 
 
 @Client.on_message(filters.command("user") & filters.private & filters.incoming)
+@check
 async def user(bot: Client, message: Message):
     if len(message.command) != 2:
         await message.reply_text(
