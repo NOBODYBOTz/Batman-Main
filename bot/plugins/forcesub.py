@@ -103,10 +103,15 @@ async def get_invite_link(bot: Client, channel_id, method):
 
 
 async def get_channel_status(channel_name, invite_link, joined):
+    if isinstance(invite_link, str):
+        invite_link = invite_link
+    else:
+        invite_link = invite_link.invite_link
+
     return {
         "name": channel_name,
         "joined": joined,
-        "link": invite_link.invite_link,
+        "link": invite_link,
     }
 
 
