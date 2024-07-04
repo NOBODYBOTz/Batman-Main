@@ -93,7 +93,10 @@ async def create_channel_status_file(channel_status):
     return text
 
 
-async def get_invite_link(bot, channel_id, method):
+async def get_invite_link(bot: Client, channel_id, method):
+    chat = await bot.get_chat(channel_id)
+    if chat.invite_link:
+        return chat.invite_link
     return await bot.create_chat_invite_link(
         channel_id, creates_join_request=(method == "request")
     )
