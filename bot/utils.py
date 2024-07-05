@@ -162,29 +162,32 @@ async def process_delete_schedule(bot):
     schedules = await db.del_schedule.filter_schedules({"status": False})
     chats = {}
     for schedule in schedules:
+        if schedule["time"] > datetime.datetime.now():
+            continue
         chat_id = schedule["chat_id"]
         if chat_id not in chats:
             chats[chat_id] = []
         chats[chat_id].append(schedule["message_id"])
+
     for message_ids in chats.values():
         for i in range(0, len(message_ids), 200):
             await process_delete_schedule_single(
                 bot, schedule, message_ids[i : i + 200]
             )
             await asyncio.sleep(1)
-            print(f"Deleted {len(message_ids[i : i + 200])} messages")
+           
     await process_delete_schedule_single(bot, schedule, message_ids)
 
 
 async def process_delete_schedule_single(bot: Client, schedule, message_ids=None):
     chat_id = schedule["chat_id"]
     time = schedule["time"]
-    if time < datetime.datetime.now():
-        with contextlib.suppress(errors.MessageDeleteForbidden):
-            await bot.delete_messages(chat_id, message_ids)
 
-        for message_id in message_ids:
-            await db.del_schedule.delete_schedule(chat_id, message_id)
+    with contextlib.suppress(errors.MessageDeleteForbidden):
+        await bot.delete_messages(chat_id, message_ids)
+
+    for message_id in message_ids:
+        await db.del_schedule.delete_schedule(chat_id, message_id)
 
 
 async def encode(string):
