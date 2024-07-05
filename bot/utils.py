@@ -172,6 +172,7 @@ async def process_delete_schedule(bot):
                 bot, schedule, message_ids[i : i + 200]
             )
             await asyncio.sleep(1)
+            print(f"Deleted {len(message_ids)} messages")
     await process_delete_schedule_single(bot, schedule, message_ids)
 
 
