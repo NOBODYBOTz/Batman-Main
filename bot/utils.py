@@ -163,15 +163,17 @@ async def process_delete_schedule(bot):
     for schedule in schedules:
         await process_delete_schedule_single(bot, schedule)
         await asyncio.sleep(1)
+    await process_delete_schedule(bot)
 
-async def process_delete_schedule_single(bot, schedule):
+
+async def process_delete_schedule_single(bot: Client, schedule):
     chat_id = schedule["chat_id"]
     message_id = schedule["message_id"]
     time = schedule["time"]
     if time < datetime.datetime.now():
         with contextlib.suppress(errors.MessageDeleteForbidden):
             await bot.delete_messages(chat_id, message_id)
-        await db.del_schedule.update_schedule(chat_id, message_id, True)
+        await db.del_schedule.delete_schedule(chat_id, message_id)
 
 
 async def encode(string):

@@ -25,3 +25,6 @@ class DelDB:
             {"chat_id": chat_id, "message_id": message_id},
             {"$set": {"status": status}},
         )
+
+    async def delete_schedule(self, chat_id, message_id):
+        await self.col.delete_one({"chat_id": chat_id, "message_id": message_id})
