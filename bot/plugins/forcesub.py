@@ -1,7 +1,7 @@
 from pyrogram import Client, StopPropagation, filters, enums
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from pyrogram.errors import UserNotParticipant
-from bot.config import Script
+from bot.config import Config, Script
 from bot.plugins.on_start_file import get_file
 from bot.utils import get_admins, is_user_in_request_join
 from database import db
@@ -94,7 +94,12 @@ async def create_channel_status_file(channel_status):
 
 
 async def get_invite_link(bot: Client, channel_id, method):
-    chat = await bot.get_chat(channel_id)
+    if Config.CHAT_CACHE.get(channel_id):
+        chat = Config.CHAT_CACHE[channel_id]
+    else:
+        chat = await bot.get_chat(channel_id)
+        Config.CHAT_CACHE[channel_id] = chat
+
     if chat.invite_link:
         return chat.invite_link
     return await bot.create_chat_invite_link(
@@ -129,7 +134,10 @@ async def check_channels(bot: Client, user_id: int, force_sub: dict):
 
         try:
             invite_link = await get_invite_link(bot, channel_id, method)
-            chat = await bot.get_chat(channel_id)
+            if Config.CHAT_CACHE.get(channel_id):
+                chat = Config.CHAT_CACHE[channel_id]
+            else:
+                chat = await bot.get_chat(channel_id)
         except Exception as e:
             print(e)
             continue
