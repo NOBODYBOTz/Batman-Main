@@ -28,3 +28,8 @@ class DelDB:
 
     async def delete_schedule(self, chat_id, message_id):
         await self.col.delete_one({"chat_id": chat_id, "message_id": message_id})
+
+    async def delete_many(self, chat_id, message_ids):
+        await self.col.delete_many(
+            {"chat_id": chat_id, "message_id": {"$in": message_ids}}
+        )

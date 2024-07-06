@@ -184,8 +184,8 @@ async def process_delete_schedule_single(bot: Client, chat_id, message_ids=None)
         await bot.delete_messages(chat_id, message_ids)
         print(f"Deleted {len(message_ids)} messages from {chat_id}")
 
-    for message_id in message_ids:
-        await db.del_schedule.delete_schedule(chat_id, message_id)
+
+    await db.del_schedule.delete_many(chat_id, message_ids)
 
 
 async def encode(string):
