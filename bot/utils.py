@@ -159,11 +159,11 @@ async def is_user_in_request_join(chat_id, user_id):
 
 
 async def process_delete_schedule(bot):
-    schedules = await db.del_schedule.filter_schedules({"status": False})
+    schedules = await db.del_schedule.filter_schedules(
+        {"status": False, "time": {"$lte": datetime.datetime.now()}}
+    )
     chats = {}
     for schedule in schedules:
-        if schedule["time"] > datetime.datetime.now():
-            continue
         chat_id = schedule["chat_id"]
         if chat_id not in chats:
             chats[chat_id] = []
@@ -174,7 +174,7 @@ async def process_delete_schedule(bot):
             await process_delete_schedule_single(bot, chat_id, message_ids[i : i + 200])
             await asyncio.sleep(1)
 
-    await process_delete_schedule_single(bot, schedule, message_ids)
+    await process_delete_schedule(bot)
 
 
 async def process_delete_schedule_single(bot: Client, chat_id, message_ids=None):
