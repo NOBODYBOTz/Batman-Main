@@ -63,16 +63,21 @@ async def refresh_cb(c: Client, m):
     channel_status = await check_channels(c, m.from_user.id, force_sub)
     if not_joined_channels := [ch for ch in channel_status if not ch["joined"]]:
         markup = [
-            [InlineKeyboardButton(text=f"Join {i['name']}", url=i["link"])]
+            [
+                InlineKeyboardButton(text=f"Join Channel {i+1}", url=channel["link"])
+                for i, channel in enumerate(channel_status)
+                if not channel["joined"]
+            ]
             for i in not_joined_channels
         ]
         markup.append(
             [InlineKeyboardButton(text="Try Again", callback_data=f"refresh_{command}")]
         )
         filename = await create_channel_status_file(channel_status)
+        mention = m.from_user.mention
         await m.message.edit(
             text=f"𝖯𝗅𝖾𝖺𝗌𝖾 𝖩𝗈𝗂𝗇 𝖳𝗁𝖾 𝖥𝗈𝗅𝗅𝗈𝗐𝗂𝗇𝗀 𝖢𝗁𝖺𝗇𝗇𝖾𝗅𝗌 𝖳𝗈 𝖴𝗌𝖾 𝖳𝗁𝗂𝗌 𝖡𝗈𝗍:\n\n{filename}\n"
-            "𝖧𝖾𝗅𝗅𝗈 {mention} 𝗒𝗈𝗎 𝗁𝖺𝗏𝖾 𝗍𝗈 𝗃𝗈𝗂𝗇 𝗆𝗒 𝖼𝗁𝖺𝗇𝗇𝖾𝗅𝗌 𝗍𝗈 𝗀𝖾𝗍 𝗒𝗈𝗎𝗋 𝖿𝗂𝗅𝖾𝗌. 𝖪𝗂𝗇𝖽𝗅𝗒 𝗃𝗈𝗂𝗇 𝗍𝗁𝖾 𝖼𝗁𝖺𝗇𝗇𝖾𝗅𝗌 𝖺𝗇𝖽 𝗍𝗋𝗒 𝖺𝗀𝖺𝗂𝗇.",
+            f"𝖧𝖾𝗅𝗅𝗈 {mention} 𝗒𝗈𝗎 𝗁𝖺𝗏𝖾 𝗍𝗈 𝗃𝗈𝗂𝗇 𝗆𝗒 𝖼𝗁𝖺𝗇𝗇𝖾𝗅𝗌 𝗍𝗈 𝗀𝖾𝗍 𝗒𝗈𝗎𝗋 𝖿𝗂𝗅𝖾𝗌. 𝖪𝗂𝗇𝖽𝗅𝗒 𝗃𝗈𝗂𝗇 𝗍𝗁𝖾 𝖼𝗁𝖺𝗇𝗇𝖾𝗅𝗌 𝖺𝗇𝖽 𝗍𝗋𝗒 𝖺𝗀𝖺𝗂𝗇.",
             reply_markup=InlineKeyboardMarkup(markup),
         )
         return
