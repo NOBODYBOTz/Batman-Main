@@ -18,4 +18,8 @@ if __name__ == "__main__":
         max_instances=1,
         id="delete_schedule",
     )
+    port = int(os.environ.get('PORT', 8080))
+    app = Bot()
+    app.run(host='0.0.0.0', port=port)
     app.run()
+    
