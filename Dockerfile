@@ -18,4 +18,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 CMD [ "python", "main.py" ]
 
 #port
-EXPOSE 8080
+EXPOSE 0.0.0.0:8080
