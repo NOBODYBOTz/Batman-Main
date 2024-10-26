@@ -16,3 +16,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Set the command to run the Python script
 CMD [ "python", "main.py" ]
+
+#port
+PORT 8080
