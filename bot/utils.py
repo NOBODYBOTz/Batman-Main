@@ -174,9 +174,7 @@ async def process_delete_schedule(bot):
     for chat_id, message_ids in chats.items():
         for i in range(0, len(message_ids), 200):
             await process_delete_schedule_single(bot, chat_id, message_ids[i : i + 200])
-            await asyncio.sleep(1)
-
-    await process_delete_schedule(bot)
+            await asyncio.sleep(1)   
 
 
 async def process_delete_schedule_single(bot: Client, chat_id, message_ids=None):
