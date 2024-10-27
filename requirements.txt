@@ -1,4 +1,4 @@
-aiohttp==3.9.3
+aiohttp==3.8.2
 APScheduler==3.10.4
 motor
 pandas==2.2.2
