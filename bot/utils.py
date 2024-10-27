@@ -44,7 +44,7 @@ async def start_webserver():
 
     app = web.AppRunner(await web_server())
     await app.setup()
-    await web.TCPSite(app, "0.0.0.0", 8000).start()
+    await web.TCPSite(app, "0.0.0.0", 8080).start()
     logging.info("Web server started")
 
 
@@ -157,7 +157,6 @@ async def is_user_in_request_join(chat_id, user_id):
     request_joins = request_joins.get("value", {})
     return str(chat_id) in request_joins and user_id in request_joins[str(chat_id)]
 
-
 async def process_delete_schedule(bot):
     schedules = await db.del_schedule.filter_schedules(
         {"status": False, "time": {"$lte": datetime.datetime.now()}}
@@ -168,8 +167,10 @@ async def process_delete_schedule(bot):
         if chat_id not in chats:
             chats[chat_id] = []
         chats[chat_id].append(schedule["message_id"])
-    # sorrt to have more than 200 messages in a chat
+
+    # Sort chats by message count in descending order
     chats = dict(sorted(chats.items(), key=lambda item: len(item[1]), reverse=True))
+
     for chat_id, message_ids in chats.items():
         for i in range(0, len(message_ids), 200):
             await process_delete_schedule_single(bot, chat_id, message_ids[i : i + 200])
